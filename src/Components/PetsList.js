@@ -1,8 +1,27 @@
 import pets from "../petsData";
 import PetItem from "./PetItem";
+import { useState } from "react";
+import Seatchbar from "./Searchbar";
 
 function PetsList() {
-  const petList = pets.map((pet) => <PetItem pet={pet} key={pet.id} />);
+  const [type, setType] = useState("");
+  const [query, setQuery] = useState("");
+
+  const filteredTypePets = pets.filter((pet) => {
+    return pet.type.includes(type);
+  });
+  const filteredPets = filteredTypePets.filter((pet) => {
+    return pet.name.toLowerCase().includes(query.toLowerCase());
+  });
+
+  const petList = filteredPets.map((pet) => <PetItem pet={pet} key={pet.id} />);
+
+  function changeQuery(event) {
+    setQuery(event.target.value);
+  }
+  function changeType(event) {
+    setType(event.target.value);
+  }
 
   return (
     <section id="doctors" className="doctor-section pt-140">
@@ -13,18 +32,10 @@ function PetsList() {
               <h1 className="mb-25 wow fadeInUp" data-wow-delay=".2s">
                 Fur-ends
               </h1>
-              <div className="input-group rounded">
-                <input
-                  type="search"
-                  className="form-control rounded"
-                  placeholder="Search"
-                  aria-label="Search"
-                  aria-describedby="search-addon"
-                />
-              </div>
+              <Seatchbar changeQuery={changeQuery} />
               <br />
               Type:
-              <select className="form-select">
+              <select className="form-select" onChange={changeType}>
                 <option value="" selected>
                   All
                 </option>
